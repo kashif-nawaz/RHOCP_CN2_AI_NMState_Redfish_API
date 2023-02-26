@@ -1,0 +1,2 @@
+# RHOCP_CN2_AI_NMState_Redfish_API
+RHOCP_CN2_AI_NMState_Redfish_API
