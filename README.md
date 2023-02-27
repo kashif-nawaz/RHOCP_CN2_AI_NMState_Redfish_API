@@ -61,10 +61,11 @@ network:
             addresses: [192.168.5.10/24]
     version: 2
 ```
-## Topology 
-![Topology](./images/topology.png)
+
 
 ## Execution
+### Topology 
+![Topology](./images/topology.png)
 ### Create VMs on KVM Host 
 * Due to paucity of resources I am using single KVM server to host all OCP nodes (3 Controllers and 2 worker nodes).
 #### Creating libvirt Storage Pool
