@@ -49,19 +49,6 @@ network:
         eno2:
             dhcp4: no
             optional: true
-    vlans:
-        bond0.80:
-            id: 80
-            link: bond0
-        bond0.30:
-            id: 30
-            link: bond0
-        bond0.40:
-            id: 40
-            link: bond0
-        bond0.60:
-            id: 60
-            link: bond0
     bridges:
         br-ctrplane:
             interfaces: [eno1]
