@@ -693,4 +693,6 @@ virsh edit <vm-name>
 <on_reboot>restart<on_reboot/> 
 virsh start <vm-name>
 ```
-* Repeat above step for all VMs 
+* Repeat above step for all OCP Nodes (VM based only)
+* Successful installation of the cluster will show  "Installed" Status for of the nodes. 
+![Successful Installation](./images/successful-installation.png)
