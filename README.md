@@ -152,8 +152,8 @@ sudo virt-install -n worker01.ocp.pxe.com \
 #### Configure Sushi-Emulartor on KVM Host 
 * Sushi-Emulator will be created as Podman container and later on Podman container can be configured as systemd service
 * Hence, I am using Ubuntu 20.04 on my KVM host, so installing Podman was bit challenging on Ubunut but if the KVM host is based on RHEL, Centos or Fedora then installing Podman is fairly straight forward.
-* (Link-1)[https://askubuntu.com/questions/1296657/unable-to-install-podman-in-ubuntu-20-04-running-on-wsl2-in-windows-10]
-* (Link-2)[https://stackoverflow.com/questions/73942531/podman-unable-to-build-image-from-dockerfile-error-creating-overlay-mount]
+* [Link-1](https://askubuntu.com/questions/1296657/unable-to-install-podman-in-ubuntu-20-04-running-on-wsl2-in-windows-10)
+* [Link-2](https://stackoverflow.com/questions/73942531/podman-unable-to-build-image-from-dockerfile-error-creating-overlay-mount)
 
 ```
 mkdir -p /etc/sushy/
