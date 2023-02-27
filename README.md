@@ -9,14 +9,14 @@
 * Juniper Networks CN2 (Cloud Native, telco grade SDN Controller) has been recently certified with (RHOCP) Redhat Open Shift (Industry leading Container based orchestrator) for telco regional data centers, 5G RAN edge & far edge application and IT Cloud Applications (hosted in public / private clouds).
 * Redhat preferred approach to install OCP cluster is to use Assisted Installer 
 * Assisted Installer is cloud host project which allows easy installation/ management  of OCP Clusters, it  also provides API calls to interact with the cluster and manage it
-* Redhat preferred approach  is to attach an ISO image with OCP Nodes via Redfish API over an http server running on some central deployed node however Juniper documentation assumes that OCP/ CN2 nodes are booted up with required ISO images and ISO image is attached to OCP Node manually.
-* Juniper documentation also does not cover how to provide  advanced networking config to target OCP nodes (e.g. if port bundle or Link Aggregation or VLAN tagging is required inside OCP target nodes).
+* Redhat preferred approach is to attach an ISO image with OCP Nodes via Redfish API over an http server running on some centrally deployed Jumphost however Juniper documentation assumes that OCP/ CN2 nodes are booted up with required ISO images and ISO image is attached to OCP Node manually.
+* Juniper documentation also does not cover how to provide advanced networking config to target OCP nodes (e.g. if port bundle or Link Aggregation or VLAN tagging is required inside OCP target nodes).
 
 ## Proposed Solution
 * In this wiki I will cover how to manage OCP target nodes via Redfish API (power cycle and adding / removing boot media from central Jumphost via http).
 * I will also cover how to provide static network configuration to target OCP nodes via NMState
 * Once ISO images were remotely attached to OCP nodes as CD-Rom then their boot order had to be changed to set CD-Rom as 1st boot order.
-* There is a cavity, that once boot order will be changed from CD-Rom to HDD and OCP Nodes will reach "Preparing setup Successful" then we have to simulate cold-reboot on the OCP Nodes otherwise changing boot order from CD-Rom to HDD would not take into affect and nodes will be kept on booting from CD-Rom and the deployment will fail.
+* Once OCP Nodes will reach "Preparing setup Successful" then we have to change the boot order from CD to Hdd and simulate cold-reboot on the OCP Nodes otherwise changing boot order from CD-Rom to HDD would not take into affect and nodes will be kept on booting from CD-Rom and the deployment will fail.
 * I have explained how to achieve above in one of following section "Power ON OCP Nodes after 1st Reboot".
 ## References 
 * [Juniper CN2 Documentation](https://www.juniper.net/documentation/us/en/software/cn-cloud-native22/cn-cloud-native-ocp-install-and-lcm/topics/task/cn-cloud-native-ocp-before-you-install.html)
