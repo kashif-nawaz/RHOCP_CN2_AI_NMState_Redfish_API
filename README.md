@@ -1,4 +1,8 @@
 # RHOCP (Redhat Openshift) Juniper CN2 Installation via AI (Assisted Installer) with NMState and Redfish_API
+## Background
+* Redhat Openshift is getting lots of attractions in 5G RAN market due to its feature richness.
+* 5G RAN VDU (virtual distribution unit, Far Edge) and VCU (virtual control unit, Edge DC) are the target places where Openshift is getting deployed besides region data center where 5G core components are placed.
+* Courtesy to Redat for these design diagrams.
 ## Problem Statement
 * Juniper Networks CN2 (Cloud Native, telco grade SDN Controller) has been recently certified with (RHOCP) Redhat Open Shift  (Industry leading Container based orchestrator) for telco regional data centers, 5G RAN edge and far edge application and IT Cloud Applications (hosted in public / private clouds).
 * Juniper documentation covers deployment of CN2 with RHOCP via AI (Assisted Installer), however that deployment method  does not cover headless deployment i.e. placing boot images at central jumphost from where all the OCP (Openshift) nodes get boot images.
