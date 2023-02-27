@@ -6,25 +6,79 @@
 * ![RAN Design Option1](./images/option1.png)
 * ![RAN Design Option2](./images/option2.png)
 ## Problem Statement
-* Juniper Networks CN2 (Cloud Native, telco grade SDN Controller) has been recently certified with (RHOCP) Redhat Open Shift  (Industry leading Container based orchestrator) for telco regional data centers, 5G RAN edge and far edge application and IT Cloud Applications (hosted in public / private clouds).
-* Juniper documentation covers deployment of CN2 with RHOCP via AI (Assisted Installer), however that deployment method  does not cover headless deployment i.e. placing boot images at central jumphost from where all the OCP (Openshift) nodes get boot images.
-* Rather, that document assumes that boot images are placed/ attached to target OCP nodes via some out of band method.
-* Juniper documentation also does not cover how to provide a customized networking config to target OCP nodes (e.g. if port bundle or Link Aggregation or VLAN tagging is required inside OCP target nodes).
+* Juniper Networks CN2 (Cloud Native, telco grade SDN Controller) has been recently certified with (RHOCP) Redhat Open Shift (Industry leading Container based orchestrator) for telco regional data centers, 5G RAN edge & far edge application and IT Cloud Applications (hosted in public / private clouds).
+* Redhat preferred approach to install OCP cluster is to use Assisted Installer 
+* Assisted Installer is cloud host project which allows easy installation/ management  of OCP Clusters, it  also provides API calls to interact with the cluster and manage it
+* Redhat preferred approach  is to attach an ISO image with OCP Nodes via Redfish API over an http server running on some central deployed node however Juniper documentation assumes that OCP/ CN2 nodes are booted up with required ISO images and ISO image is attached to OCP Node manually.
+* Juniper documentation also does not cover how to provide  advanced networking config to target OCP nodes (e.g. if port bundle or Link Aggregation or VLAN tagging is required inside OCP target nodes).
+
 ## Proposed Solution
 * In this wiki I will cover how to manage OCP target nodes via Redfish API (power cycle and adding / removing boot media from central Jumphost via http).
 * I will also cover how to provide static network configuration to target OCP nodes via NMState
 * Once ISO images were remotely attached to OCP nodes as CD-Rom then their boot order had to be changed to set CD-Rom as 1st boot order.
-* But this arrangement introduced another problem with VM based OCP nodes as during OCP installation OCP nodes requires 2-3 reboots and VMs were rebooting  very quickly by loading ISO Image from CD-Rom which is attached from Jumphost over HTTP via Redfish API.
-* Although; I was removing remotely attached ISO image from the VM based OCP nodes, but that requires a cold reboot of the VM and during installation I can not do a manual cold reboot VM based OCP nodes during the installation process.
-* To solve above problem I had to define  VM based OCP nodes in such a way  that on 1st reboot during the OCP installation OCP nodes (VMs) shall go into a shutdown state rather then restart and before that I had to remove that remotely connected ISO image plus change the boot order from CD to HDD.
+* There is a cavity, that once boot order will be changed from CD-Rom to HDD and OCP Nodes will reach "Preparing setup Successful" then we have to simulate cold-reboot on the OCP Nodes otherwise changing boot order from CD-Rom to HDD would not take into affect and nodes will be kept on booting from CD-Rom and the deployment will fail.
+* I have explained how to achieve above in one of following section "Power ON OCP Nodes after 1st Reboot".
 ## References 
+* [Juniper CN2 Documentation](https://www.juniper.net/documentation/us/en/software/cn-cloud-native22/cn-cloud-native-ocp-install-and-lcm/topics/task/cn-cloud-native-ocp-before-you-install.html)
+* [Juniper CN2 and OCP Qauflied Verions](https://www.juniper.net/documentation/en_US/release-independent/contrail-cloud-native/topics/reference/cloud-native-contrail-supported-platforms.pdf)
+* [Redhat AI API Document](https://access.redhat.com/documentation/en-us/assisted_installer_for_openshift_container_platform/2022/html/assisted_installer_for_openshift_container_platform/installing-with-api)
+* [Sushi-Tools](https://cloudcult.dev/sushy-emulator-redfish-for-the-virtualization-nation/)
+* [Redfish Eumulator](https://docs.openstack.org/sushy-tools/latest/user/index.html)
+* [Redfish API](https://cloudcult.dev/fishing-for-sushy-with-curl/)
+* [Redfish API Fix](https://opendev.org/openstack/sushy-tools/commit/cee6785048997aa4c8b4287b9fbffb3ecf52fc07?ref=cloud-cult-devops)
+* [Useful Document to Understand OCP AI Process](https://cloudcult.dev/creating-openshift-clusters-with-the-assisted-service-api/#part-vii-generate-and-download-the-installation-media)
+* [NMState](https://nmstate.io/examples.html)
+* [NMState Examples](https://access.redhat.com/documentation/en-us/assisted_installer_for_openshift_container_platform/2022/html/assisted_installer_for_openshift_container_platform/assembly_network-configuration)
 
+## Pre-requisite
+* Your Favourite Linux distro is installed on KVM host, in my case it's Ubuntu 20.04.
+* Install required packages on KVM host.
+```
+sudo apt update
+sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
+sudo systemctl enable --now libvirtd
+```
+* ![KVM Host Network Config](./images/kvm-host-networking.png)
+* Net-plane config for my KVM Host
+```
+network:
+    ethernets:
+        eno1:
+            dhcp4: no
+            optional: true
+        eno2:
+            dhcp4: no
+            optional: true
+    vlans:
+        bond0.80:
+            id: 80
+            link: bond0
+        bond0.30:
+            id: 30
+            link: bond0
+        bond0.40:
+            id: 40
+            link: bond0
+        bond0.60:
+            id: 60
+            link: bond0
+    bridges:
+        br-ctrplane:
+            interfaces: [eno1]
+            addresses: [192.168.24.10/24]
+            gateway4: 192.168.24.1
+            nameservers:
+               addresses: [1.1.1.1, 8.8.8.8]
+        br-Tenant:
+            interfaces: [eno2]
+            addresses: [192.168.5.10/24]
+    version: 2
+```
 ## Topology 
 ![Topology](./images/topology.png)
-## Execution
 
+## Execution
 ### Create VMs on KVM Host 
-* I am assuming that on the KVM host all required libraries (libvirtd, kvm, virsh etc.) are installed before hand to host the VMs (OCP Nodes).
 * Due to paucity of resources I am using single KVM server to host all OCP nodes (3 Controllers and 2 worker nodes).
 #### Creating libvirt Storage Pool
 ```
@@ -609,5 +663,46 @@ curl -X POST "$ASSISTED_SERVICE_API/api/assisted-install/v2/clusters/$CLUSTER_ID
 ```
 
 #### Power Cycle Control for VM Based OCP Nodes
+* Keep an eye on AI Installer GUI and when nodes have reached "Preparing Setup Successful" at that Stage OCP Nodes boot has to be changed from CD to HDD and CD Rom has to be removed from the OCP Nodes 
+![Nodes_ready](./images/nodes_prepared.png)
 
-#### 
+```
+for REDFISH_SYSTEM in f615f0ac-ea49-4c55-a6e7-1d386cb495cd bea822c5-f0c4-43b7-974e-ec1b0945c470 b667a771-c4b9-457e-899b-8930e7ba1ad1 9fa8ae2b-5a4c-4048-a7c6-a95d342fc00f 05963fbc-391a-4275-a65f-219e2075150b
+do 
+curl -X PATCH -H 'Content-Type: application/json' -d '{"Boot": {"BootSourceOverrideTarget": "Hdd","BootSourceOverrideEnabled": "Continuous"}}' "http://$REDFISH_HOST:$REDFISH_PORT/redfish/v1/Systems/$REDFISH_SYSTEM" | jq .
+done 
+
+
+for REDFISH_SYSTEM in f615f0ac-ea49-4c55-a6e7-1d386cb495cd bea822c5-f0c4-43b7-974e-ec1b0945c470 b667a771-c4b9-457e-899b-8930e7ba1ad1 9fa8ae2b-5a4c-4048-a7c6-a95d342fc00f 05963fbc-391a-4275-a65f-219e2075150b
+do 
+
+curl -s "http://$REDFISH_HOST:$REDFISH_PORT/redfish/v1/Systems/$REDFISH_SYSTEM" | jq .Boot
+done 
+
+for REDFISH_MANAGER in f615f0ac-ea49-4c55-a6e7-1d386cb495cd bea822c5-f0c4-43b7-974e-ec1b0945c470 b667a771-c4b9-457e-899b-8930e7ba1ad1 9fa8ae2b-5a4c-4048-a7c6-a95d342fc00f 05963fbc-391a-4275-a65f-219e2075150b
+do 
+curl -d \
+    '{"Image":"'"$ISO_URL"'", "Inserted": false}' \
+     -H "Content-Type: application/json" \
+     -X POST \
+     http://$REDFISH_HOST:$REDFISH_PORT/redfish/v1/Managers/$REDFISH_MANAGER/VirtualMedia/Cd/Actions/VirtualMedia.InsertMedia
+done 
+
+for REDFISH_MANAGER in f615f0ac-ea49-4c55-a6e7-1d386cb495cd bea822c5-f0c4-43b7-974e-ec1b0945c470 b667a771-c4b9-457e-899b-8930e7ba1ad1 9fa8ae2b-5a4c-4048-a7c6-a95d342fc00f 05963fbc-391a-4275-a65f-219e2075150b
+do 
+curl -s http://$REDFISH_HOST:$REDFISH_PORT/redfish/v1/Managers/$REDFISH_MANAGER/VirtualMedia/Cd/ | jq  '[{iso_connected: .Inserted}]'
+done 
+```
+#### Power ON OCP Nodes after 1st Reboot
+* If you look at VMs definition, I have added "--events on_reboot=destroy" purposefully so that OCP Nodes (VMs) should stay shutdown after 1st reboot is issued by OCP installer.
+* It is because hence CD-Rom was set as the 1st in boot order in the beginning, although I have changed the boot order from CD to HDD  in above step but it requires Cold-Reboot which I can't do  during OCP installation. 
+* So once OCP Nodes (VM) will get 1st reboot then those should stay in shutdown to simulate Cold Reboot.
+* Before starting  the VMs which are in shutdown due to "--events on_reboot=destroy"  we have to do following changes in VM definition. 
+
+```
+virsh edit <vm-name>
+<on_reboot>destroy <on_reboot/> 
+<on_reboot>restart<on_reboot/> 
+virsh start <vm-name>
+```
+* Repeat above step for all VMs 
