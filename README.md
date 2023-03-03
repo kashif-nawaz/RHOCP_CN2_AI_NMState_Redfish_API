@@ -15,7 +15,7 @@
 ## Proposed Solution
 * In this wiki I will cover how to manage OCP target nodes via Redfish API (power cycle and adding / removing boot media from central Jumphost via http).
 * I will also cover how to provide static network configuration to target OCP nodes via NMState
-* Once ISO images were remotely attached to OCP nodes as CD-Rom then their boot order had to be changed to set CD-Rom as 1st boot order.
+* Once ISO image was remotely attached to OCP nodes as CD-Rom then their boot order had to be changed to set CD-Rom as 1st boot order.
 * Once OCP Nodes will reach "Preparing setup Successful" then we have to change the boot order from CD to Hdd and simulate cold-reboot on the OCP Nodes otherwise changing boot order from CD-Rom to HDD would not take into affect and nodes will be kept on booting from CD-Rom and the deployment will fail.
 * I have explained how to achieve above in one of following section "Power ON OCP Nodes after 1st Reboot".
 ## References 
@@ -30,7 +30,7 @@
 * [NMState](https://nmstate.io/examples.html)
 * [NMState Examples](https://access.redhat.com/documentation/en-us/assisted_installer_for_openshift_container_platform/2022/html/assisted_installer_for_openshift_container_platform/assembly_network-configuration)
 
-## Pre-requisite
+## Pre-Requisite
 * Your Favourite Linux distro is installed on KVM host, in my case it's Ubuntu 20.04.
 * Install required packages on KVM host.
 ```
