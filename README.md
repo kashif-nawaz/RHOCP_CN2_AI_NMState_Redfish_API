@@ -399,7 +399,7 @@ sudo systemctl enable chronyd --now
 * ![Click Load Token](./images/offline_token.png)
 * Save the token in your system
 ```
-OFFLINE_ACCESS_TOKEN="..."
+OFFLINE_ACCESS_TOKEN=$(<offline_token.txt)
 ```
 * Export TOKEN into your environment to get access to AI resources.
 * This token will expire every 5 minutes, so you need to refresh the following token if any of the steps in subsequent sections get failed due to token expiry.
@@ -421,7 +421,47 @@ curl -s https://api.openshift.com/api/assisted-install/v2/component-versions -H 
 * Save the pull secret into your system.
 * Get access token from Juniper account team to access Juniper Images Registry enterprise.hub.juniper.net.
 * Merge the Red Hat Pull-Secret and CN2 Pull Secret into a single file.
+```
+cat cn2-token | jq .
+
+{
+  "auths": {
+    "enterprise-hub.juniper.net": {
+      "auth": "token---",
+      "email": "email--"
+    }
+  }
+}
+
+cat ocp-token | jq .
+{
+  "auths": {
+    "cloud.openshift.com": {
+      "auth": "token---",
+      "email": "email"
+    },
+    "quay.io": {
+      "auth": "token---",
+      "email": "email"
+    },
+    "registry.connect.redhat.com": {
+      "auth": "token---",
+      "email": "email"
+    },
+    "registry.redhat.io": {
+      "auth": "token---",
+      "email": "email"
+    }
+  }
+}
+
+jq -s '.[0] * .[1]' ocp-pull-secret cn2-pull-secret > combine-pull-secret
+export PULL_SECRET=$(sed '/^[[:space:]]*$/d' combine-pull-secret | jq -R .)
+```
 * Genrete ssh-key in Jumphost.
+```
+ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1 
+```
 * Prepare deployment file. 
 ```
 export ASSISTED_SERVICE_API="https://api.openshift.com"
