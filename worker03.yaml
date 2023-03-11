@@ -1,0 +1,37 @@
+dns-resolver:
+  config:
+    search:
+    - ocp.pxe.com
+    server:
+    - 192.168.24.13
+interfaces:
+- ipv4:
+    address:
+    - ip: 192.168.24.206
+      prefix-length: 24
+    dhcp: false
+    enabled: true
+  name: eno4
+  state: up
+  type: ethernet
+- ipv4:
+    address:
+    - ip: 192.168.5.206
+      prefix-length: 24
+    dhcp: false
+    enabled: true
+  link-aggregation:
+        mode: 802.3ad
+        options:
+          miimon: "140"
+        slaves:
+        - eno1
+  name: bond0
+  state: up
+  type: bond
+routes:
+  config:
+  - destination: 0.0.0.0/0
+    next-hop-address: 192.168.24.1
+    next-hop-interface: ens3
+    table-id: 254

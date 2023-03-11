@@ -19,6 +19,7 @@
 * Once OCP Nodes will reach "Preparing setup Successful" then we have to change the boot order from CD to Hdd and simulate cold-reboot on the OCP Nodes otherwise changing boot order from CD-Rom to HDD would not take into affect and nodes will be kept on booting from CD-Rom and the deployment will fail.
 * I have explained how to achieve above in one of following section "Power ON OCP Nodes after 1st Reboot".
 ## References 
+* [assisted-installer-deepdive)](https://github.com/latouchek/assisted-installer-deepdive)
 * [Juniper CN2 Documentation](https://www.juniper.net/documentation/us/en/software/cn-cloud-native22/cn-cloud-native-ocp-install-and-lcm/topics/task/cn-cloud-native-ocp-before-you-install.html)
 * [Juniper CN2 and OCP Qauflied Verions](https://www.juniper.net/documentation/en_US/release-independent/contrail-cloud-native/topics/reference/cloud-native-contrail-supported-platforms.pdf)
 * [Redhat AI API Document](https://access.redhat.com/documentation/en-us/assisted_installer_for_openshift_container_platform/2022/html/assisted_installer_for_openshift_container_platform/installing-with-api)
@@ -177,6 +178,7 @@ EOF
 ```
 #### Creating Sushy-Emulator Container
 ```
+export SUSHY_TOOLS_IMAGE=${SUSHY_TOOLS_IMAGE:-"quay.io/metal3-io/sushy-tools"}
 sudo podman create --net host --privileged --name sushy-emulator -v "/etc/sushy":/etc/sushy -v "/var/run/libvirt":/var/run/libvirt "${SUSHY_TOOLS_IMAGE}" sushy-emulator -i :: -p 8000 --config /etc/sushy/sushy-emulator.conf
 podman start sushy-emulator
 ```
@@ -562,10 +564,18 @@ curl -H "Authorization: Bearer $TOKEN" -L "$ASSISTED_SERVICE_API/api/assisted-in
 
 
 ### Verfying VM Access via Redfish API
+* Redfish Operations are managed by reffering following elements.
+  * Systems (managed system): System that provides information, status, or control via a Redfish-defined interface.
+  * Managers: A manager is a systems management entity that can implement or provide access to a Redfish service.
 
 ```
 REDFISH_HOST="192.168.24.10"
 REDFISH_PORT="8000"
+ISO_URL="http://192.168.24.13:8080/rhcos/discovery_image_ocpd.iso"
+
+curl -I http://192.168.24.13:8080/rhcos/discovery_image_ocpd.iso
+HTTP/1.1 200 OK
+
 curl -s http://$REDFISH_HOST:$REDFISH_PORT/redfish/v1/Systems/ | jq -r
 {
   "@odata.type": "#ComputerSystemCollection.ComputerSystemCollection",

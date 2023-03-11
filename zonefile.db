@@ -1,0 +1,47 @@
+$TTL 1W
+@	IN	SOA	ns1.ocp.pxe.com.	root (
+			2023020600	; serial
+			3H		; refresh (3 hours)
+			30M		; retry (30 minutes)
+			2W		; expiry (2 weeks)
+			1W )		; minimum (1 week)
+	IN	NS	ns1.ocp.pxe.com.
+	IN	MX 10	smtp.ocp.pxe.com.
+;
+; 
+ns1	IN	A	192.168.24.13
+smtp	IN	A	192.168.24.13
+;
+bastion	IN	A	192.168.24.13
+;
+;
+; The api points to the IP of your load balancer
+api		    IN	A	192.168.24.198
+api-int		IN	A	192.168.24.199
+;
+; The wildcard also points to the load balancer
+;
+; Create entry for the bootstrap host
+bootstrap	IN	A	192.168.24.200
+;
+; Create entries for the master hosts
+master01		IN	A	192.168.24.201
+master02		IN	A	192.168.24.202
+master03		IN	A	192.168.24.203
+;
+; Create entries for the worker hosts
+worker01		IN	A	192.168.24.204
+worker02		IN	A	192.168.24.205
+worker03		IN	A	192.168.24.206
+;
+; The ETCd cluster lives on the masters...so point these to the IP of the masters
+etcd-0	IN	A	192.168.24.201
+etcd-1	IN	A	192.168.24.202
+etcd-2	IN	A	192.168.24.203
+;
+; The SRV records are IMPORTANT....make sure you get these right...note the trailing dot at the end...
+_etcd-server-ssl._tcp	IN	SRV	0 10 2380 etcd-0.ocp.pxe.com.
+_etcd-server-ssl._tcp	IN	SRV	0 10 2380 etcd-1.ocp.pxe.com.
+_etcd-server-ssl._tcp	IN	SRV	0 10 2380 etcd-2.ocp.pxe.com.
+;
+;EOF

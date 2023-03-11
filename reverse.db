@@ -1,0 +1,24 @@
+$TTL 1W
+@	IN	SOA	ns1.ocp.pxe.com.	root (
+			2023020600	; serial
+			3H		; refresh (3 hours)
+			30M		; retry (30 minutes)
+			2W		; expiry (2 weeks)
+			1W )		; minimum (1 week)
+	IN	NS	ns1.ocp.pxe.com.
+;
+; syntax is "last octet" and the host must have fqdn with trailing dot
+201	IN	PTR	master01.ocp.pxe.com.
+202	IN	PTR	master02.ocp.pxe.com.
+203	IN	PTR	master03.ocp.pxe.com.
+;
+200	IN	PTR	bootstrap.ocp.pxe.com.
+;
+198	IN	PTR	api.ocp.pxe.com.
+199	IN	PTR	api-int.ocp.pxe.com.
+;
+204	IN	PTR	worker01.ocp.pxe.com.
+205	IN	PTR	worker02.ocp.pxe.com.
+206	IN	PTR	worker03.ocp.pxe.com.
+;
+;EOF
