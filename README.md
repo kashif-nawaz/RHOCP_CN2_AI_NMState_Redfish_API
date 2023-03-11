@@ -422,7 +422,7 @@ curl -s https://api.openshift.com/api/assisted-install/v2/component-versions -H 
 * Get access token from Juniper account team to access Juniper Images Registry enterprise.hub.juniper.net.
 * Merge the Red Hat Pull-Secret and CN2 Pull Secret into a single file.
 ```
-cat cn2-token | jq .
+cat cn2-pull-secret | jq .
 
 {
   "auths": {
@@ -433,7 +433,7 @@ cat cn2-token | jq .
   }
 }
 
-cat ocp-token | jq .
+cat ocp-pull-secret | jq .
 {
   "auths": {
     "cloud.openshift.com": {
