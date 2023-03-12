@@ -461,6 +461,7 @@ export PULL_SECRET=$(sed '/^[[:space:]]*$/d' combine-pull-secret | jq -R .)
 * Genrete ssh-key in Jumphost.
 ```
 ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1 
+export CLUSTER_SSH_KEY="$(cat .ssh/id_rsa.pub)"
 ```
 * Prepare deployment file. 
 ```
