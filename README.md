@@ -18,8 +18,11 @@
 * Once ISO image was remotely attached to OCP nodes as CD-Rom then their boot order had to be changed to set CD-Rom as 1st boot order.
 * Once OCP Nodes will reach "Preparing setup Successful" then we have to change the boot order from CD to Hdd and simulate cold-reboot on the OCP Nodes otherwise changing boot order from CD-Rom to HDD would not take into affect and nodes will be kept on booting from CD-Rom and the deployment will fail.
 * I have explained how to achieve above in one of following section "Power ON OCP Nodes after 1st Reboot".
+## Note
+* Although, I have deployed this Lab setup over virtual machines but in reality 5G RAN (edge/ far edge) Openshift clusters would be running  bare metal servers. 
+* I will cover bare metal RHOCP+CN2 deployments in in another wiki along with SRIOV and DPDK networking capabilities.
 ## References 
-* [assisted-installer-deepdive)](https://github.com/latouchek/assisted-installer-deepdive)
+* [assisted-installer-deepdive](https://github.com/latouchek/assisted-installer-deepdive)
 * [Juniper CN2 Documentation](https://www.juniper.net/documentation/us/en/software/cn-cloud-native22/cn-cloud-native-ocp-install-and-lcm/topics/task/cn-cloud-native-ocp-before-you-install.html)
 * [Juniper CN2 and OCP Qauflied Verions](https://www.juniper.net/documentation/en_US/release-independent/contrail-cloud-native/topics/reference/cloud-native-contrail-supported-platforms.pdf)
 * [Redhat AI API Document](https://access.redhat.com/documentation/en-us/assisted_installer_for_openshift_container_platform/2022/html/assisted_installer_for_openshift_container_platform/installing-with-api)
@@ -39,7 +42,7 @@ sudo apt update
 sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils
 sudo systemctl enable --now libvirtd
 ```
-* ![KVM Host Network Config](./images/kvm-host-networking.png)
+![KVM Host Network Config](./images/kvm-host-networking.png)
 * Net-plane config for my KVM Host
 ```
 network:
@@ -151,7 +154,7 @@ sudo virt-install -n worker01.ocp.pxe.com \
  --network bridge=br-Tenant,mac=52:54:00:6a:37:33 
 ```
 #### Configure Sushi-Emulartor on KVM Host
-* I followed [link](https://cloudcult.dev/sushy-emulator-redfish-for-the-virtualization-nation/)  and [link](https://cloudcult.dev/fishing-for-sushy-with-curl/) to setup Suhi and use it alongwith Redfish API to manage VMs.
+* I followed the [link](https://cloudcult.dev/sushy-emulator-redfish-for-the-virtualization-nation/)  and [link](https://cloudcult.dev/fishing-for-sushy-with-curl/) to setup Suhi and use it alongwith Redfish API to manage VMs.
 * Sushi-Emulator will be created as Podman container and later on Podman container can be configured as systemd service
 * Hence, I am using Ubuntu 20.04 on my KVM host, so installing Podman was bit challenging on Ubunut, I followed following links to install Podman on my kvm host , reffered as control-host  in my topology. 
 * [Link](https://www.microhost.com/docs/tutorial/how-to-install-podman-on-ubuntu-20-04-lts/)
@@ -400,7 +403,7 @@ sudo systemctl enable chronyd --now
 
 ### Preparing OCP AI Installation on Jumphost
 * Login to  [Redhat Portal](https://console.redhat.com/openshift/token?ref=cloud-cult-devops)
-* ![Click Load Token](./images/offline_token.png)
+![Click Load Token](./images/offline_token.png)
 * Save the token in your system
 ```
 OFFLINE_ACCESS_TOKEN=$(<offline_token.txt)
@@ -560,6 +563,7 @@ curl -s -X PATCH "$ASSISTED_SERVICE_API/api/assisted-install/v2/infra-envs/$INFR
 ```
 * Prepare NMStat config files of OCP nodes [Reference](https://access.redhat.com/documentation/en-us/assisted_installer_for_openshift_container_platform/2022/html/assisted_installer_for_openshift_container_platform/assembly_network-configuration#nmstate_configuration)
 * I have uploaded master01.yaml  master02.yaml  master03.yaml worker01.yaml  worker02.yaml with wiki, those can be used as reference.
+* Worker-3.yaml config uploaeded with this wiki depicts working config for LACP bond.
 * Assign static MAC to IP addresses, make sure these MACs and NIC names are matched VM/ Physical nodes as per your setup.
 ```
 jq -n --arg NMSTATE_YAML1 "$(cat master01.yaml)" --arg NMSTATE_YAML2 "$(cat master02.yaml)" --arg NMSTATE_YAML3 "$(cat master03.yaml)" --arg NMSTATE_YAML4 "$(cat worker01.yaml)" --arg NMSTATE_YAML5 "$(cat worker02.yaml)" \
@@ -854,7 +858,7 @@ virsh start <vm-name>
 * Successful installation of the cluster will show  "Installed" Status for of the nodes. 
 ![Successful Installation](./images/successful-installation.png)
 * Once installation is successful , you can get kubeconfig file for the cluster.
-* [kubeconfig][./images/kubeconfig.png]
+![kubeconfig][./images/kubeconfig.png]
 * Save the kubeconfig in your Jumphost /bastion home directory (~/.kube/config)
 * Verify cluster nodes and pods
 ```
@@ -863,8 +867,8 @@ oc get pods -A
 ```
 * You can also login to Cluster Web Console.
 * Get access DNS or /etc/hosts enteries for your cluster and adjust your DNS server config or Jumphost /etc/hosts file accordingly.
-* ![Webconsole info](./images/webconsole.png)
-* ![DNS Entries](./images/dnsentries.png)
-* ![/etc/hosts enteries](./images/etchostsenteries.png)
+![Webconsole info](./images/webconsole.png)
+![DNS Entries](./images/dnsentries.png)
+![/etc/hosts enteries](./images/etchostsenteries.png)
 * Open Openshift Web UI (via direct access to Jumphost or via ssh dynamic tunnel), login with "kubeadmin" user and password to be copied using following method:-
-* ![kubeadmin](./images/kubeadmin.png)
+![kubeadmin](./images/kubeadmin.png)
