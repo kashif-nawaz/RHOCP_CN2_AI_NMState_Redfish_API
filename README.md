@@ -586,7 +586,7 @@ jq -n --arg NMSTATE_YAML1 "$(cat master01.yaml)" --arg NMSTATE_YAML2 "$(cat mast
 ```
 * Pathc the NMStat config file request-body.json  with the infra-envs.
 ```
-curl -s -X PATCH "$ASSISTED_SERVICE_API/api/assisted-install/v2/infra-envs/$INFRA_ENVS_ID" -d @request-body.json --header "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" | jq -r '.id'
+curl -s -X PATCH "$ASSISTED_SERVICE_API/api/assisted-install/v2/infra-envs/$INFRA_ENVS_ID" -d@request-body.json --header "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" | jq -r '.id'
 ```
 * Generate ISO Image and Download it web server in Jumphost. 
 ```
