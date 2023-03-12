@@ -727,7 +727,13 @@ curl -s -d '{"ResetType":"ForceOn"}' \
 done 
 
 ```
-* After some time machines will be registered with OCP cluster, and role (master or worker) can be set for each node accordingly.
+* On your browser, go to the Red Hat Hybrid Cloud Console [Link](https://console.redhat.com/openshift) and click on your cluster to see details of your cluster.
+* You can search for your cluster by cluster name or by cluster ID, click on your cluster under deployment.
+
+* ![Link](./images/role-assignment1.png)
+* Assign role 
+* ![Link](./images/role-assignment2.png)
+
 #### OCP Installation
 * Set API VIPs. 
 ```
@@ -833,7 +839,9 @@ done
 
 ```
 virsh edit <vm-name>
+Replace:
 <on_reboot>destroy <on_reboot/> 
+with:
 <on_reboot>restart<on_reboot/> 
 virsh start <vm-name>
 ```
