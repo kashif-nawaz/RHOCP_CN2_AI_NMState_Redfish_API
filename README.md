@@ -455,7 +455,7 @@ cat ocp-pull-secret | jq .
   }
 }
 
-jq -s '.[0] * .[1]' ocp-pull-secret cn2-pull-secret > combine-pull-secret
+jq -s '.[0] * .[1]' ocp-pull-secret cn2-pull-secret | jq -c >combine-pull-secret
 export PULL_SECRET=$(sed '/^[[:space:]]*$/d' combine-pull-secret | jq -R .)
 ```
 * Genrete ssh-key in Jumphost.
@@ -503,12 +503,16 @@ export CLUSTER_ID=$(curl -s -X POST "$ASSISTED_SERVICE_API/api/assisted-install/
 ```
 * Verify if the cluster is created. 
 ```
-curl -s -X GET "https://api.openshift.com/api/assisted-install/v2/clusters" -H "accept: application/json" -H "Authorization: Bearer $TOKEN" | jq -r
+curl -s -X GET "$ASSISTED_SERVICE_API/api/assisted-install/v2/clusters" -H "accept: application/json" -H "Authorization: Bearer $TOKEN" | jq -r
 curl -s -X GET --header "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -H "get_unregistered_clusters: false" $ASSISTED_SERVICE_API/api/assisted-install/v2/clusters/$CLUSTER_ID?with_hosts=true | jq -r '.validations_info' | jq .
 
 curl -s -X GET --header "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -H "get_unregistered_clusters: false" $ASSISTED_SERVICE_API/api/assisted-install/v2/clusters/$CLUSTER_ID?with_hosts=true | jq -r '.status'
 
 curl -s -X GET --header "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -H "get_unregistered_clusters: false" $ASSISTED_SERVICE_API/api/assisted-install/v2/clusters/$CLUSTER_ID?with_hosts=true | jq -r '.validations_info' | jq .
+```
+* In case if cluster deletion is required.
+```
+curl -s -X DELETE "$ASSISTED_SERVICE_API/api/assisted-install/v2/clusters/$CLUSTER_ID" -H "accept: application/json" -H "Authorization: Bearer $TOKEN" | jq -r
 ```
 * Set CN2 as CNI in  the above created Openshift Cluster
 
@@ -598,6 +602,7 @@ Relabeled /var/www/html/rhcos/discovery_image_ocpd.iso from unconfined_u:object_
 * If in case infra-env is required to be deleted.
 
 ```
+curl -s -X GET "$ASSISTED_SERVICE_API/api/assisted-install/v2/infra-envs" -H "accept: application/json" -H "Authorization: Bearer $TOKEN" | jq -r '.id'
 curl -s -X DELETE "$ASSISTED_SERVICE_API/api/assisted-install/v2/infra-envs/$INFRA_ENVS_ID"   --header "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" | jq '.id'
 curl -H "Authorization: Bearer $TOKEN" -L "$ASSISTED_SERVICE_API/api/assisted-install/v2/infra-envs/" | jq .
 ```
