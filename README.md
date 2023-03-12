@@ -863,4 +863,4 @@ oc get pods -A
 * ![DNS Entries](./images/dnsentries.png)
 * ![/etc/hosts enteries](./images/etchostsenteries.png)
 * Open Openshift Web UI (via direct access to Jumphost or via ssh dynamic tunnel), login with "kubeadmin" user and password to be copied using following method:-
-* [kubeadmin](./images/kubeadmin.png)
+* ![kubeadmin](./images/kubeadmin.png)
