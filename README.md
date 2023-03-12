@@ -150,12 +150,16 @@ sudo virt-install -n worker01.ocp.pxe.com \
  --network bridge=br-ctrplane,mac=52:54:00:6a:37:32 \
  --network bridge=br-Tenant,mac=52:54:00:6a:37:33 
 ```
-#### Configure Sushi-Emulartor on KVM Host 
+#### Configure Sushi-Emulartor on KVM Host
+* I followed [link](https://cloudcult.dev/sushy-emulator-redfish-for-the-virtualization-nation/)  and [link](https://cloudcult.dev/fishing-for-sushy-with-curl/) to setup Suhi and use it alongwith Redfish API to manage VMs.
 * Sushi-Emulator will be created as Podman container and later on Podman container can be configured as systemd service
-* Hence, I am using Ubuntu 20.04 on my KVM host, so installing Podman was bit challenging on Ubunut but if the KVM host is based on RHEL, Centos or Fedora then installing Podman is fairly straight forward.
-* [Link-1](https://askubuntu.com/questions/1296657/unable-to-install-podman-in-ubuntu-20-04-running-on-wsl2-in-windows-10)
-* [Link-2](https://stackoverflow.com/questions/73942531/podman-unable-to-build-image-from-dockerfile-error-creating-overlay-mount)
+* Hence, I am using Ubuntu 20.04 on my KVM host, so installing Podman was bit challenging on Ubunut, I followed following links to install Podman on my kvm host , reffered as control-host  in my topology. 
+* [Link](https://www.microhost.com/docs/tutorial/how-to-install-podman-on-ubuntu-20-04-lts/)
+* [Link](https://askubuntu.com/questions/1296657/unable-to-install-podman-in-ubuntu-20-04-running-on-wsl2-in-windows-10)
+* [Link](https://stackoverflow.com/questions/73942531/podman-unable-to-build-image-from-dockerfile-error-creating-overlay-mount)
 
+* If the KVM host is based on RHEL, Centos or Fedora then installing Podman is fairly straight forward.
+* Create config file for sushi emulator
 ```
 mkdir -p /etc/sushy/
 cat << EOF > /etc/sushy/sushy-emulator.conf
