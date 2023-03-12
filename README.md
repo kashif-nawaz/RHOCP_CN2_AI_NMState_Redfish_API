@@ -729,9 +729,10 @@ done
 ```
 * On your browser, go to the Red Hat Hybrid Cloud Console [Link](https://console.redhat.com/openshift) and click on your cluster to see details of your cluster.
 * You can search for your cluster by cluster name or by cluster ID, click on your cluster under deployment.
-
+* ![Link](./images/role-assignment.png)
+* Click on Host discovery.
 * ![Link](./images/role-assignment1.png)
-* Assign role 
+* Assign roles
 * ![Link](./images/role-assignment2.png)
 
 #### OCP Installation
