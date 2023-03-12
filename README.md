@@ -849,3 +849,18 @@ virsh start <vm-name>
 * Repeat above step for all OCP Nodes (VM based only)
 * Successful installation of the cluster will show  "Installed" Status for of the nodes. 
 ![Successful Installation](./images/successful-installation.png)
+* Once installation is successful , you can get kubeconfig file for the cluster.
+* [kubeconfig][./images/kubeconfig.png]
+* Save the kubeconfig in your Jumphost /bastion home directory (~/.kube/config)
+* Verify cluster nodes and pods
+```
+oc get nodes 
+oc get pods -A
+```
+* You can also login to Cluster Web Console.
+* Get access DNS or /etc/hosts enteries for your cluster and adjust your DNS server config or Jumphost /etc/hosts file accordingly.
+* ![Webconsole info](./images/webconsole.png)
+* ![DNS Entries](./images/dnsentries.png)
+* ![/etc/hosts enteries](./images/etchostsenteries.png)
+* Open Openshift Web UI (via direct access to Jumphost or via ssh dynamic tunnel), login with "kubeadmin" user and password to be copied using following method:-
+* [kubeadmin](./images/kubeadmin.png)
