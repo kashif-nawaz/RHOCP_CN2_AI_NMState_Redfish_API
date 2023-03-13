@@ -14,15 +14,17 @@
 * Juniper documentation assumes that OCP/ CN2 nodes are booted up with discovery ISO images as discovery ISO image is attached to OCP Node in some way.
 * Juniper documentation also does not cover how to provide advanced networking config to target OCP nodes (e.g. if port bundle or Link Aggregation or VLAN tagging is required inside OCP target nodes).
 
-## Proposed Solution
-* In this wiki I will cover how to manage OCP target nodes via Redfish API (power cycle and adding / removing boot media from central Jumphost via http).
-* I will also cover how to provide static network configuration to target OCP nodes via NMState.
-* Once ISO image is remotely attached to OCP nodes as CD-ROM then their boot order need to be changed to set CD-ROM as 1st boot order.
-* OCP nodes will be powered on via Redfish API and node will be regsitered with AI.
-* Once OCP Nodes will reach "Preparing setup Successful" then we have to change the boot order from CD to Hdd and simulate cold-reboot on the OCP Nodes otherwise changing boot order from CD-Rom to HDD would not take into affect and nodes will be kept on booting from CD-Rom and the deployment will fail.
-* I have explained how to achieve above in one of following section "Power ON OCP Nodes after 1st Reboot".
+## Proposed Solution and Work Flow
+* I will cover how to add  static network configuration via NMstat into ISO image besides adding other required config.
+* I will  also cover how to perform life cycle operations of OCP target nodes via Redfish API. 
+* I will discuss how to attach discovery ISO images  to OCP target nodes remotely via http server and Redfish API.
+* Once ISO image is remotely attached to OCP nodes as CD-ROM then their boot order needs to be changed to set CD-ROM as 1st boot order.
+* OCP nodes will be powered on via Redfish API, and  nodes will boot from a remote ISO image attached as CD-ROM.
+* After booting up from  discovery ISO image,  OCP nodes will get the required config will  register themselves  with AI.
+* Once OCP Nodes will reach "Preparing setup Successful" then their boot order needs to be changed from CD to HDD and cold-reboot is required.
+* After cold reboot OCP nodes will boot from HDD and Openshift+CN2 installation will start.
 ## Note
-* Although, I have deployed this Lab setup over virtual machines but in reality 5G RAN (edge/ far edge) Openshift clusters would be running  bare metal servers. 
+* Although, I have deployed this Lab setup virtual machines but in reality 5G RAN (edge/ far edge) Openshift clusters would be running  on bare metal servers.
 * I will cover bare metal RHOCP+CN2 deployments in in another wiki along with SRIOV and DPDK networking capabilities.
 ## References 
 * [assisted-installer-deepdive](https://github.com/latouchek/assisted-installer-deepdive)
