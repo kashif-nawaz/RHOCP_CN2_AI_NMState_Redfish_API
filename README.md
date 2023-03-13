@@ -7,15 +7,18 @@
 ![RAN Design Option2](./images/option2.png)
 ## Problem Statement
 * Juniper Networks CN2 (Cloud Native, telco grade SDN Controller) has been recently certified with (RHOCP) Redhat Open Shift (Industry leading Container based orchestrator) for telco regional data centers, 5G RAN edge & far edge application and IT Cloud Applications (hosted in public / private clouds).
-* Redhat preferred approach to install OCP cluster is to use Assisted Installer 
-* Assisted Installer is cloud host project which allows easy installation/ management  of OCP Clusters, it  also provides API calls to interact with the cluster and manage it
-* Redhat preferred approach is to attach an ISO image with OCP Nodes via Redfish API over an http server running on some centrally deployed Jumphost however Juniper documentation assumes that OCP/ CN2 nodes are booted up with required ISO images and ISO image is attached to OCP Node manually.
+* At present CN2 installation with RHOCP is qualified via Assisted Installer (AI).
+* Assisted Installer  is cloud hosted project which allows easy installation/ management  of OCP Clusters, it  also provides API calls to interact with the cluster for life cycle  operation of the cluster.
+* With AI based installation, a discovery ISO image is required to be generated which images contain the all the required config (e.g. cluster they key, pull-secrets, network config and any ignition file required for temporary bootstrap node)
+* Once the discovery ISO image is prepared, downloaded then target Openshift nodes need to boot with that discovery ISO.
+* Juniper documentation assumes that OCP/ CN2 nodes are booted up with discovery ISO images as discovery ISO image is attached to OCP Node in some way.
 * Juniper documentation also does not cover how to provide advanced networking config to target OCP nodes (e.g. if port bundle or Link Aggregation or VLAN tagging is required inside OCP target nodes).
 
 ## Proposed Solution
 * In this wiki I will cover how to manage OCP target nodes via Redfish API (power cycle and adding / removing boot media from central Jumphost via http).
-* I will also cover how to provide static network configuration to target OCP nodes via NMState
-* Once ISO image was remotely attached to OCP nodes as CD-Rom then their boot order had to be changed to set CD-Rom as 1st boot order.
+* I will also cover how to provide static network configuration to target OCP nodes via NMState.
+* Once ISO image is remotely attached to OCP nodes as CD-ROM then their boot order need to be changed to set CD-ROM as 1st boot order.
+* OCP nodes will be powered on via Redfish API and node will be regsitered with AI.
 * Once OCP Nodes will reach "Preparing setup Successful" then we have to change the boot order from CD to Hdd and simulate cold-reboot on the OCP Nodes otherwise changing boot order from CD-Rom to HDD would not take into affect and nodes will be kept on booting from CD-Rom and the deployment will fail.
 * I have explained how to achieve above in one of following section "Power ON OCP Nodes after 1st Reboot".
 ## Note
