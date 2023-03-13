@@ -19,7 +19,7 @@
 * I will  also cover how to perform life cycle operations of OCP target nodes via Redfish API. 
 * I will discuss how to attach discovery ISO images  to OCP target nodes remotely via http server and Redfish API.
 * Once ISO image is remotely attached to OCP nodes as CD-ROM then their boot order needs to be changed to set CD-ROM as 1st boot order.
-* OCP nodes will be powered on via Redfish API, and  nodes will boot from a remote ISO image attached as CD-ROM.
+* OCP nodes will be powered on via Redfish API, and  nodes will boot from remotely attached ISO image.
 * After booting up from  discovery ISO image,  OCP nodes will get the required config will  register themselves  with AI.
 * Once OCP Nodes will reach "Preparing setup Successful" then their boot order needs to be changed from CD to HDD and cold-reboot is required.
 * After cold reboot OCP nodes will boot from HDD and Openshift+CN2 installation will start.
