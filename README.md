@@ -1,16 +1,16 @@
 # RHOCP (Redhat Openshift) Juniper CN2 Installation via AI (Assisted Installer) with NMState and Redfish_API
 ## Background
 * Redhat Openshift is getting lots of attractions in 5G RAN market due to its feature richness.
-* 5G RAN VDU (virtual distribution unit, Far Edge) and VCU (virtual control unit, Edge DC) are the target places where Openshift is getting deployed besides region data center where 5G core components are placed.
+* 5G RAN VDU (virtual distribution unit, Far Edge) and VCU (virtual control unit, Edge DC) are the target places where Openshift is getting deployed besides regional data center where 5G core components are placed.
 * Courtesy to Redat for these design diagrams.
 ![RAN Design Option1](./images/option1.png)
 ![RAN Design Option2](./images/option2.png)
 ## Problem Statement
 * Juniper Networks CN2 (Cloud Native, telco grade SDN Controller) has been recently certified with (RHOCP) Redhat Open Shift (Industry leading Container based orchestrator) for telco regional data centers, 5G RAN edge & far edge application and IT Cloud Applications (hosted in public / private clouds).
 * At present CN2 installation with RHOCP is qualified via Assisted Installer (AI).
-* Assisted Installer  is cloud hosted project which allows easy installation/ management  of OCP Clusters, it  also provides API calls to interact with the cluster for life cycle  operation of the cluster.
-* With AI based installation, a discovery ISO image is required to be generated which images contain the all the required config (e.g. cluster they key, pull-secrets, network config and any ignition file required for temporary bootstrap node)
-* Once the discovery ISO image is prepared, downloaded then target Openshift nodes need to boot with that discovery ISO.
+* Assisted Installer  is cloud hosted project which allows easy installation/ deployment  of OCP Clusters, it  also provides API calls to interact with the cluster for it's life cycle.
+* With AI based installation, a discovery ISO image is required to be generated which  contain  all the required config (e.g. cluster ssh key, pull-secrets, network config and any ignition file required for temporary bootstrap node).
+* Once the discovery ISO image is prepared and downloaded then the discovery ISO image will be used to boot OCP target nodes.
 * Juniper documentation assumes that OCP/ CN2 nodes are booted up with discovery ISO images as discovery ISO image is attached to OCP Node in some way.
 * Juniper documentation also does not cover how to provide advanced networking config to target OCP nodes (e.g. if port bundle or Link Aggregation or VLAN tagging is required inside OCP target nodes).
 
@@ -20,7 +20,7 @@
 * I will discuss how to attach discovery ISO images  to OCP target nodes remotely via http server and Redfish API.
 * Once ISO image is remotely attached to OCP nodes as CD-ROM then their boot order needs to be changed to set CD-ROM as 1st boot order.
 * OCP nodes will be powered on via Redfish API, and  nodes will boot from remotely attached ISO image.
-* After booting up from  discovery ISO image,  OCP nodes will get the required config will  register themselves  with AI.
+* After booting up from  discovery ISO image,  OCP nodes will get  required config and will  register themselves  with the Openshift AI.
 * Once OCP Nodes will reach "Preparing setup Successful" then their boot order needs to be changed from CD to HDD and cold-reboot is required.
 * After cold reboot OCP nodes will boot from HDD and Openshift+CN2 installation will start.
 ## Note
