@@ -6,7 +6,7 @@
 ![RAN Design Option1](./images/option1.png)
 ![RAN Design Option2](./images/option2.png)
 ## Problem Statement
-* Juniper Networks CN2 (Cloud Native, telco grade SDN Controller) has been recently certified with (RHOCP) Redhat Open Shift (Industry leading Container based orchestrator) for telco regional data centers, 5G RAN edge & far edge application and IT Cloud Applications (hosted in public / private clouds).
+* Juniper Networks CN2 (Cloud Native, Carrier-Grade SDN Controller) has been recently certified with (RHOCP) Redhat Open Shift (Industry leading Container based orchestrator) for telco regional data centers, 5G RAN edge & far edge application and IT Cloud Applications (hosted in public / private clouds).
 * At present CN2 installation with RHOCP is qualified via Assisted Installer (AI).
 * Assisted Installer  is cloud hosted project which allows easy installation/ deployment  of OCP Clusters, it  also provides API calls to interact with the cluster for it's life cycle.
 * With AI based installation, a discovery ISO image is required to be generated which  contain  all the required config (e.g. cluster ssh key, pull-secrets, network config and any ignition file required for temporary bootstrap node).
