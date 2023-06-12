@@ -3,8 +3,7 @@
 * Redhat Openshift is getting lots of attractions in 5G RAN market due to its feature richness.
 * 5G RAN VDU (virtual distribution unit, Far Edge) and VCU (virtual control unit, Edge DC) are the target places where Openshift is getting deployed besides regional data center where 5G core components are placed.
 * Courtesy to Redat for these design diagrams.
-![RAN Design Option1](./images/option1.png)
-![RAN Design Option2](./images/option2.png)
+![5g_architecture](./images/5g_architecture.png)
 ## Problem Statement
 * Juniper Networks CN2 (Cloud Native, Carrier-Grade SDN Controller) has been recently certified with (RHOCP) Redhat Open Shift (Industry leading Container based orchestrator) for telco regional data centers, 5G RAN edge & far edge application and IT Cloud Applications (hosted in public / private clouds).
 * At present CN2 installation with RHOCP is qualified via Assisted Installer (AI).
